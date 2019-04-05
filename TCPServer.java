@@ -2,16 +2,24 @@ import java.io.*;
 import java.net.*;
 import java.time.*;
 
+/*
+ * O leilao e controlado pelo servidor, que recebe 10 lances quaisquer e diz qual foi o lance vencedor.
+ * 
+ * Alunos: Alexandre Bing, Igor Brehm e Vinícius Parmeggiani 
+*/
+
 class TCPServer {
 	public static void main(String args[]) throws Exception {
 		String clientSentence;
 		ServerSocket welcomeSocket = new ServerSocket(6789);
 		int bestBet = 0;
+        String bestBetOwner = "";
 		int num_bets = 10;
 		while (true) {
 			if(num_bets == 0){
 				System.out.println("\nLeilao terminou!");
 				System.out.println("Lance Vencedor: "+ bestBet);
+                System.out.println("Feito por: "+ bestBetOwner);
 				break;
 			}
 			else{
@@ -22,10 +30,14 @@ class TCPServer {
 			BufferedReader inFromClient =
 			new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 			clientSentence = inFromClient.readLine();
-			System.out.println("Lance Recebido: " + clientSentence);
-			if(Integer.parseInt(clientSentence) > bestBet){
-				bestBet = Integer.parseInt(clientSentence);
-				System.out.println("\nMaior lance ate agora!");
+            String[] data = clientSentence.split("-", 2);
+			System.out.println("Lance Recebido: " + data[1]);
+            System.out.println("Feito por: "+ data[0]);
+			if(Integer.parseInt(data[1]) > bestBet){
+				bestBet = Integer.parseInt(data[1]);
+                bestBetOwner = data[0];
+				System.out.println("\nMaior lance ate agora! "+ bestBet+"!");
+                System.out.println("Lance feito por: "+ bestBetOwner);
 			}
 		}
 	}
